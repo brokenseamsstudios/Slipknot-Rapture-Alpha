@@ -1,5 +1,5 @@
 :: StoryTitle
-ChapterOne + 2
+Slipknot Rapture
 
 
 :: StoryData
@@ -26,8 +26,14 @@ ChapterOne + 2
 }
 
 
-:: $lastpassage {"position":"600,500","size":"100,100"}
+:: $lastpassage {"position":"500,500","size":"100,100"}
 
+
+
+:: Ascending {"position":"1200,300","size":"100,100"}
+Your body slumps to the ground... everything goes black...
+
+(link-replace: "This is how it was meant to be")[This place was no good for you, [[open your eyes.->Chapter Two Mother Ending]] ]
 
 
 :: Bullets {"position":"0,500","size":"100,100"}
@@ -39,12 +45,13 @@ ChapterOne + 2
 :: Chapter One {"position":"1000,500","size":"100,100"}
 (set: $canusemenu to true)bee-beep- BEEP! BEEP!
 
-The alarm clock snaps you out of the cozy dream you had from the night before.
+The alarm clock snaps you out of the cozy dream disrupting your slumber.
+
 (text-style:"bold","italic","blurrier","buoy", "fidget")[ [[Sleep Sleep Sleep Sleep Sleep->Sleep Ending One]] ]
-{You rub your sleepy eyes and look at the (link-rerun: "clock")[(dialog: [6:00:AM], "Dimiss.")].
-}
+
+{You rub your sleepy eyes and look at the (link-rerun: "clock")[(dialog: [6:00:AM], "Dimiss.")].}
+
 You should probably [[wake up.->wake up]]
-(track: 'clock', 'play')
 
 
 :: Chapter One Front Door Ending {"position":"1100,1300","size":"100,100"}
@@ -54,7 +61,17 @@ You got the leave ending!
 
 
 :: Chapter Two {"position":"1200,200","size":"100,100"}
-(if: $dearestmom is true)[]
+
+
+
+:: Chapter Two Mother Ending {"position":"1300,300","size":"100,100"}
+You've reached the end of Chapter One!
+
+
+
+:: Chapter Vars {"position":"100,900","size":"100,100"}
+(set: $bosshealth to 100)
+(set: $isinbossfight to false)
 
 
 :: Credits and Links [Credtis-and-links] {"position":"100,200","size":"100,100"}
@@ -78,21 +95,27 @@ Mixkit
 
 
 :: FakeScreenLoader {"position":"200,0","size":"100,100"}
+(set: $started to it)This game contains topics and imagery that is not suitable for children or those who may be struggling with mental health illnesses.
+[[Play at your own risk!->How to Play]]
+
 (display: "Pre Game Vars")
-(go-to: "How to Play")
-<!--This screen should never ever appear on the players screen as there is no interaction required or needed on this screen.
-This fixes the first glitch from the variable "$lastpassage" which at all times needs a passage it was last on-->
+(if: $startedgame is 0)[(set: $startedgame to it + 1)(go-to: "FakeScreenLoader")]
 
 
-:: FakeStartScreen {"position":"200,200","size":"100,100"}
-{(set: $canshowmenu to true)
-}[[Start Game<-Start Slipknot Rapture]]
+:: FakeStartScreen {"position":"200,300","size":"100,100"}
+{(track: 'gamename', 'loop', false)
+(set: $canshowmenu to true)
+(set: _audiochecker to false)
+}(button:)[(link-rerun: "Start Game")[(if: _audiochecker is false)[(track: 'gamename', 'play')(set: _audiochecker to true)(go-to: "Var Preloader")] ] ] 
 
-(button:)[(link-rerun: "Clear Data")[] ] 
+(button: "=X=")[(link-rerun: "Clear Data")[(dialog: [This does nothing right now.], "Dismiss")] ] 
 
 (display: "Credits and Links")
 (display: "Difficulty Picker")
 <!--The fake start screen forces the player to click and therefore allows a bug to be fixed which allows audio to be played-->
+(track: 'starttheme', 'loop', true)
+(track: 'starttheme', 'play')
+(if: _audiochecker is true and (track: 'gamename', 'isplaying') )[wuh]
 
 
 :: Footer [footer] {"position":"400,300","size":"100,100"}
@@ -100,9 +123,17 @@ This fixes the first glitch from the variable "$lastpassage" which at all times 
 
 
 :: FooterDis {"position":"400,400","size":"100,100"}
-{
-(set: _openmenu to false)
-|Savemenu)[(display: "Save and Load Menu")]
+{(set: _openmenu to false)
+
+}|Savemenu)[(float-box: "=X=", "=Y=")+(border: "solid")[(button:)[(link-rerun: "Save One")[(save-game: "Save One")(if: (saved-games:) contains "Save One")[(notify: '3s')[Saved Game!] ] ] ]
+(button:)[(link-rerun: "Save Two")[(save-game: "Save Two")(if: (saved-games:) contains "Save Two")[(notify: '3s')[Saved Game!] ] ] ]
+(button:)[(link-rerun: "Save Three")[(save-game: "Save Three")(if: (saved-games:) contains "Save Three")[(notify: '3s')[Saved Game!] ] ] ]
+
+(button:)[(link-rerun: "Load Save One")[(if: (saved-games:) contains "Save One")[(load-game: "Save One")[(notify: '3s')[Loaded Game!] ] ] ] ] 
+(button:)[(link-rerun: "Load Save Two")[(if: (saved-games:) contains "Save Two")[(load-game: "Save Two")[(notify: '3s')[Loaded Game!] ] ] ] ] 
+(button:)[(link-rerun: "Load Save Three")[(if: (saved-games:) contains "Save Three")[(load-game: "Save Three")[(notify: '3s')[Loaded Game!] ] ] ] ]
+] ]{
+
 (float-box: "X====", "======Y")[(if: $isinv is true)[(set: $isinv to false)(button:)[ [[Return->$lastpassage]] ] ]
 (else-if: $isinv is false and $loading is false)[(button:)[ [[Inventory]] ] ] ]}
 {
@@ -117,10 +148,25 @@ This fixes the first glitch from the variable "$lastpassage" which at all times 
 :: Guns {"position":"0,600","size":"100,100"}
 {(if: $hasgun is false)[You have no guns.]
 
+(set: _ishid to true)
 <!--this is the selection for the weapons and in here we are just going to type out the weapons!-->
-}|showselection)[(float-box: "=X=", "=Y=")[You are chud] ]{
 
-}(else:)[(button:)[(link-rerun: "Select a gun")[(show: ?showselection)] ] ]
+}|showselection)[{
+	(float-box: "=X=", "==Y")+(border: "Solid")[
+		(if: $Guns's Handgun is true)
+			[(button:)[(link-rerun: "Select Handgun")[
+        		(set: $hasweaponequipped to true)
+                (set: $selectedgun to "Handgun")
+                (set: $CGD to $pistoldamage)
+            	(hide: ?showselection)(set: _ishid to true)
+            		(dialog: [You selected your pistol!], "Dismiss.")] ] ]{
+		(else:)[You have no pistol.]}
+        ] ]{
+<!--CGD stands for Current Gun Damage and sets the current gun to the proper damag but its also useful because it allows use to be more dynamic and fluid with guns-->
+
+(else:)[
+(button:)[(link-rerun: "Select a gun")[
+(if: _ishid is true)[(set: _ishid to false)(show: ?showselection)] ] ] ]}
 
 
 :: Header [header] {"position":"300,300","size":"100,100"}
@@ -136,28 +182,36 @@ This fixes the first glitch from the variable "$lastpassage" which at all times 
 
 
 :: HealthDisplay {"position":"300,400","size":"100,100"}
-(float-box:"X=", "Y========")[(b4r: 'solid')(meter: bind $health, 100, "X", "Health", red,)]
+(float-box:"=X==", "Y========")[(border: "solid")(meter: bind $health, 100, "X", "Health", red,)]
 
 
 :: How to Play {"position":"200,100","size":"100,100"}
-(link-rerun: "Puzzles : ")[This game is very puzzle driven, to progress with the game you must have time and patience.
-However not all puzzles are necessary, so remember that exploring is rewarding!]
-(link-rerun: "Combat : ")[The combat in this game aims to have both scripted encounters and random encounters.
+(button:)[(link-replace: "Puzzles : ")[This game is very puzzle-driven; to progress with the game you must have time and patience. However, not all puzzles are necessary, so remember that exploring is rewarding!] ]
+
+(button:)[(link-replace: "Combat : ")[The combat in Slipknot Rapture aims to have both scripted encounters and random encounters.
 There also is a weapon system that is most likely going to be subject to change.
 (link:"Learn more?")[{
 	}(link-rerun: "Scripted Encounters?")[(dialog: [Scripted encounters will be things such as boss encounters, secret encounters, and other encounters that will be in every playthrough.], "Okay.")]
-	(link-rerun: "Random Encounters?")[(dialog: [Some areas of the game will take place outside such as on the streets, in these areas there will be a random chance that in between Passages the player will have an encounter.], "Okay.")]
+	(link-rerun: "Random Encounters?")[(dialog: [Some areas of the game will take place outside, such as on the streets; in these areas there will be a random chance that in between Passages the player will have an encounter.], "Okay.")]
 	(link-rerun: "Gun System?")[(dialog: [Make sure you first have a gun selected.
-    Guns require you not only to have the gun and the proper ammuniton.
+    Guns require you not only to have the gun and the proper ammunition.
     Howevere while being in an encounter if you use a gun it can break rendering it useless.], "Okay.")]
-	(link-rerun: "Knife System?")[(dialog: [Much like guns, knifes can break and if they do they will be rendered useless.], "Okay")] ] ]
-(link-rerun: "Passages and Chapters : ")[Each different scene is a passage and each passge has text, any purple/blue text is interactable with.
-Each chapter has a different ending based on the players choices. The player can make a multiple amount of choices in each chapter and each playthrough will be different.
-(link-replace: "PSST...")[We do plan on having unique backgrounds for each passage but thats more of a end development goal.] ]
-(link-rerun: "Saving and Loading : ")[Saving is done is the html local history, please ensure that your browser supports this.]
-(link-rerun: "Audio : ")[Not all web browsers have audio support, this game has audio and it is recommended to play with audio.]
-(link-rerun: "Browser Trouble Shooter : ")[(go-to: "TSL")]
-[[Start->FakeStartScreen]]
+	(link-rerun: "Knife System?")[(dialog: [Much like guns, knives can break, and if they do, they will be rendered useless.], "Okay")] ] ] ]
+
+(button:)[(link-replace: "Passages and Chapters : ")[Each different scene is a Passage, and each Passage has text; any purple/blue text is interactable with.
+Each Chapter has a different ending based on the players' choices. The player can make multiple amounts of choices in each Chapter, and each playthrough will be different.
+
+(link-replace: "PSST...")[We do plan on having unique backgrounds for each Passage, but that's more of an end development goal.] ] ]
+
+(button:)[(link-replace: "Saving and Loading : ")[Saving is done in the HTML local history; please ensure that your [[browser supports this.->TSL]] ] ]
+
+(button:)[(link-replace: "Audio : ")[Not all web browsers have audio support; this game has audio, and it is recommended to play with (link-rerun: "audio.")[(track: 'audiocheck', 'play')] ] ]
+
+(button:)[(link-replace: "Browser Trouble Shooter : ")[(go-to: "TSL")] ]
+
+(button:)[ [[Start->Loading screen]] ]
+
+<!--color code achievements items ect-->
 
 
 :: Inventory {"position":"400,500","size":"100,100"}
@@ -168,34 +222,43 @@ Each chapter has a different ending based on the players choices. The player can
 (link-replace: "Knife : " )[(display: "Knife")]
 (link-replace: "Bullets : ")[(display: "Bullets")]
 (link-replace: "Fire Arms : ")[(display: "Guns")]
+(link-replace: "Current Keys")[(display: "Keys")]
+(link-replace: "Use Radio")[(display: "Radio")]
 ]
+
+
+:: Keys {"position":"0,200","size":"100,100"}
+{(link-replace: "Check Keys?")[(if: $HouseKeys's "Front Door Key" is false and $HouseKeys's "Basement Key" is false )[You have no keys]
+(else:)[(for: _keys where $HouseKeys's _keys is true, ...(dm-names: $HouseKeys) )[_keys] ] ]}
 
 
 :: Knife {"position":"0,400","size":"100,100"}
 (if: $hasknife is false)[You have no knife](else:)[You have a knife]
 
 
-:: Loading screen [textcenter slowtrans] {"position":"200,400","size":"100,100"}
-{(set: _loading to 0)
+:: Loading screen [slowtrans textcenter] {"position":"200,200","size":"100,100"}
+{
+
+(set: _loading to 0)
 (set: $canshowmenu to false)
 
-Loading : |loadingbar>[_loading]%
+}|loadingbar>[Loading : _loading %]{
 
 (live: 0.5s)[
 	(set: _loading to it + (random: 3,15))
-    	(if: _loading > 100)[(set: _loading to 100)(go-to: "Var Preloader")]
-    	(if: _loading is 100)[(go-to: "Var Preloader")]
-	(else:)[
-    	(rerun: ?loadingbar) ] ]
-}
+    	(if: _loading >= 100)[(set: _loading to 100)[(go-to: "FakeStartScreen")] ]
+        	(else:)[(rerun: ?loadingbar)] ]
+
 (track: 'starttheme', 'stop')
 (track: 'loadingsound', 'play')
 
+(display: "Player DMS Arrays")
 (display: "Player Vars")
 (display: "Player DMS")
 (display: "Player DM Vars")
 (display: "Player House Vars")
-
+(display: "Chapter Vars")}
+(display: "Player House DMS")
 
 
 :: Medkits {"position":"0,300","size":"100,100"}
@@ -204,15 +267,30 @@ Loading : |loadingbar>[_loading]%
 (dialog: [Do you want to (link-rerun: "Use a medkit?")[(set: $health to it + (random: 5, 20)))(dialog: [You used a medkit], "Much better.")] ], "Maybe later." )] ] medkits.]}
 
 
+:: Mother Fight {"position":"1500,800","size":"100,100"}
+(float-box: "X", "=Y========")[(border: "solid")(meter: bind $bosshealth, 100, "X", "Boss Health", purple)]{
+
+(if: $bosshealth >= 0)[(go-to: "Ascending")]
+
+}(float-box: "=X=", "====Y")+(border: "solid")[Select an action!
+
+{(button: "=X=")[(link-rerun: "Attack")[
+	(if: $hasweaponequipped is true)[
+	(set: _attack to $CGD's random)(if: $selectedgun is "Handgun")[
+    	(set: $bosshealth to it - _attack)]
+    		(dialog: [You attack with you weapons for _attack damage.], "Dismiss.")[
+            	(dialog: [The Monsters drill like fingers end in sharp points, They skin deep into your flesh as she attacks you. . . No humanity is left in her], "Push Her Away!")[(set: $health to it - (random: 5, 30))] ] ] ]
+
+	(else:)[(dialog: [You have no weapon selected.], "Dismiss")] ]}{
+}(button: "=X=")[(link-replace: "Use medkit")[chud] ] ]
+
+
 :: MotherBossFight {"position":"1375,800","size":"100,100"}
 The thing looks at you as you approach... it's obviously suffering... 
 
 (link-replace: "Get Closer")[IT LUNGES OUT OF THE BED AND ATTACKS ITS CLAWS LEAVE DEEP SCRATCHES!!!
 IT SHRIEKS IN PAIN WITH EACH MOVEMENT!!!
-DO SOMETHING NOW
-
-
-]
+[[DO SOMETHING NOW->Mother Fight]] ]
 
 
 :: MotherReveal {"position":"1125,800","size":"100,100"}
@@ -247,31 +325,35 @@ WONT(live: 0.25s)[(go-to: "PMBD4")]
 
 
 :: PMBD4 {"position":"1700,600","size":"100,100"}
-(set: $playerpanic to true)OPEN (live: 0.5s)[(set: $loading to false)(go-to: "MothersRoom")]
+(set: $playerpanic to true)OPEN (live: 0.5s)[(set: $canusemenu to true)(set: $loading to false)(go-to: "MothersRoom")]
 
 
-:: Player DM Vars {"position":"0,1000","size":"100,100"}
-(set: $selecthandgun to false)
-(set: $selectshotgun to false)
-(set: $selectrifle to false)
+:: Player DM Vars {"position":"0,1100","size":"100,100"}
+(set: $selectedgun to "")
 
 
-:: Player DMS {"position":"0,900","size":"100,100"}
+:: Player DMS {"position":"0,1000","size":"100,100"}
 (set: $GunBullets to (dm: "Handgun Bullets", 0, "Shotgun Slugs", 0, "Rifle Bullets", 0) )
 (set: $Guns to (dm: "Handgun", false, "Shotgun", false, "Rifle", false) )
 <!--These call the list of the guns and the bullets for each before the game starts.-->
 
 
-:: Player House Vars {"position":"0,1100","size":"100,100"}
-(set: $housekey to false)
-(set: $bathroomkey to false)
+:: Player DMS Arrays {"position":"0,1500","size":"100,100"}
+<!--This sets the damage amount depending on what weapon you have equiped-->
+(set: $pistoldamage to (array: 15, 25, 30) )
+
+
+:: Player House DMS {"position":"0,1200","size":"100,100"}
+(set: $HouseKeys to (dm: "Front Door Key", false, "Basement Key", false) )
+<!--This is the Datamaps for stuff like keys.-->
+
+
+:: Player House Vars {"position":"0,1300","size":"100,100"}
 (set: $hasgun to false)
 (set: $hasknife to false)
 (set: $pbmedkit to true)
 (set: $takeshower to false)
-
-(set: $pbk to false)
-<!--Player Basement Key-->
+(set: $radio to false)
 
 (set: $hjc to 0)
 <!--hjc stands for housej jumpscare click and sets the jumpscare value to 0-->
@@ -280,29 +362,27 @@ WONT(live: 0.25s)[(go-to: "PMBD4")]
 <!--mru stands for mothers room unlock and just checks if you have gotten everything you need before you enter the room-->
 
 
-:: Player Vars {"position":"0,800","size":"100,100"}
+:: Player Vars {"position":"0,900","size":"100,100"}
 (set: $playerpanic to false)
 (set: $health to 100)
 
 <!--Inventroy Variables-->
 (set: $medkit to 0)
+(set: $hasweaponequipped to false)
 
 
 :: PlayerBasement {"position":"1300,950","size":"100,100"}
-{(if: $pbk is false)[(link-rerun: "Try the basement door")[(dialog: [The door is locked you need the key], "Walk back and keep searching.")] ]
-}(else-if: $pbk is true)[(link-rerun:  "Try the basement door")[(dialog: [You have unlocked the door [[Enter the basement.->PlayerBasementUnlocked]] ], "Maybe later. . .")] ]
+{(if: $HouseKeys's "Basement Key" is false)[(link-rerun: "Try the basement door")[(dialog: [The door is locked you need the key], "Walk back and keep searching.")] ]
+}(else:)[(link-rerun:  "Try the basement door")[(dialog: [You have unlocked the door [[Enter the basement.->PlayerBasementUnlocked]] ], "Maybe later. . .")] ]
 
 [[PlayerHHF1<-walk back.]]
 
 
 :: PlayerBasementUnlocked {"position":"1300,1050","size":"100,100"}
-{The first thing that catches your eyes in the basement is the (link-rerun: "medkit cabnit")[
-	(if: $pbmedkit is false)[(dialog: [The cabnit is empty.], "Close the cabnit")]
-	(else-if: $pbmedkit is true)[
-    	(set: $medkit to it + 1)
-    	(dialog: [You got a medkit!], "Take the medkit")[(set: $pbmedkit to false)(notify: '3s')[Medkit added to Inventory] ] ] ]}
+{The first thing that catches your eyes in the basement is the (if: $medkit is 0)[(link-rerun: "medical cabnit")[(dialog: [There is a medkit in the cabnit!], "Take medkit")[(set: $medkti to it + 1)(notify: '3s')[you got the medkit (go-to: "PlayerBasementUnlocked")] ] ] ]
+(else-if: $medkit is > 0)[(link-rerun: "medical cabnit")[(dialog: [The cabnit is empty.], "Close the cabnit.")] ]}
 
-{(if: $housekey is false)[(link-replace: "Something on the floor catches your eye.")[(link-replace: "Theres a key on the ground.")[(link-replace: "Take the key.")[There is nothing on the ground anymore.(set: $housekey to true)] ] ] ]
+{(if: $HouseKeys's "Front Door Key" is false)[(link-replace: "Something on the floor catches your eye.")[(link-replace: "Theres a key on the ground.")[(link-replace: "Take the key.")[There is nothing on the ground anymore.(set: $housekey to true)] ] ] ]
 (else:)[There is nothing on the ground anymore.]}
 
 [[Head back.->PlayerHHF1]]
@@ -319,7 +399,7 @@ Flies buzz around the (link-rerun: "rotten meat.")[(dialog: [The meat resemble m
 [[Exit the dining room->PlayerHHF1]]
 
 
-:: PlayerFrontDoor {"position":"1100,1200","size":"100,100"}
+:: PlayerFrontDoor {"position":"1100,1150","size":"100,100"}
 {(if: $housekey is true)[(link-replace: "Unlock the door")[The door unlocks [[Step Out->Chapter One Front Door Ending]] ] ]
 (else-if: $housekey is false)[The door is locked.]}
 
@@ -328,11 +408,13 @@ Flies buzz around the (link-rerun: "rotten meat.")[(dialog: [The meat resemble m
 
 :: PlayerHHBathroom {"position":"875,800","size":"100,100"}
 The bathroom tile are cold against your feet.
-{(link-rerun: "you glance in the mirror")[(dialog: [You look in the mirror you look...
-disgusting... You look filfthy... maybe you are a monster... or maybe you are just depressed], "Failure.")]}
-(if: $takeshower is false)[You should probably [[take a shower]]. ]{
-(else-if: $takeshower is true)[]}
+{(if: $takeshower is false)[You can (link-rerun: "glance in the mirror")[(dialog: [You look filfthy, you feel disgusting.
+You question if you are a monster..., No just a failure.], "FAILURE.")] ]
+(if: $takeshower is false)[You should probably [[take a shower]]. ]
+(else-if: $takeshower is true)[You can (link-rerun: "glance in the mirror")[(dialog: [You feel slightly better after showering.
+You breathe out and let out all the stress you can...], "Was that a noise?")] ]}
 [[Leave the bathroom.->PlayerHouseHall]]
+(track: 'showering', 'stop')
 
 
 :: PlayerHHF1 {"position":"1100,1000","size":"100,100"}
@@ -345,15 +427,10 @@ At the far end of the hall you the the [[exit->PlayerFrontDoor]]
 
 
 :: PlayerHHOffice {"position":"875,900","size":"100,100"}
-{
+The office is dark it has a computer with decent specs on it
+(link-rerun: "The room")[(dialog:[The air in this room is dry; the walls are covered with sound proofing material, and not much else is of notice.], "Dismiss")] is small.
 
-(set: _officepistolnotif to 0)
-(if: $hasgun is true and _officepistolnotif is 0)[(notify: '3s')[Handgun added to inventory] ]
-
-}The office is dark it has a computer with decent specs on it
-(link-rerun: "The room")[(dialog:[The air in this room is dry, the walls are covered with sound proofing material and not much else is of notice.], "Dismiss")] is small.
-
-The desk the contains the computers monitor
+The desk the contains the computers monitor.
 Aswell as a safe on it with a [[PlayerOfficeKeypad<-key pad.]]
 
 [[Walk back to the hallway.->PlayerHouseHall]]
@@ -367,7 +444,7 @@ The dark hallway of the second floor lies ahead of you to the right are the [[st
 
 The first door to the left leads to the [[bathroom->PlayerHHBathroom]]
 Next door further up but still to the left would enter the [[office->PlayerHHOffice]]
-All the way at the very end of the hall is the {(if: $mru is false)[
+All the way at the very end of the hall is {(if: $mru is false)[
 	(link-rerun: "Your mothers room.")[
     	(set: $hjc to it + 1)(if: $hjc is 6)[
         	(track: 'jumpscare', 'play')]
@@ -378,8 +455,8 @@ All the way at the very end of the hall is the {(if: $mru is false)[
 
 :: PlayerKitchen {"position":"900,1100","size":"100,100"}
 The kitchen is empty save for what you would usually find in a kitchen...
-(if: $pbk is true)[There is nothing on the table.]{
-}(else-if: $pbk is false)[Except for the (link-append: "keys")[(set: $pbk to true)(dialog: [You grab the keys off the table], "Take the basement keys.")[(go-to: "PlayerKitchen")] ] that are on the table]
+(if: $HouseKeys's "Basement Key" is true)[There is nothing on the table.]{
+}(else-if: $HouseKeys's "Basement Key" is false)[Except for the (link-append: "keys")[(set: $HouseKeys's "Basement Key" to true)(dialog: [You grab the keys off the table], "Take the basement keys.")[(go-to: "PlayerKitchen")] ] that are on the table]
 
 [[go back->PlayerHHF1]]
 <!--Pbk is the player house basement key-->
@@ -395,22 +472,23 @@ The chosen's followers.], "Put down the note.")]
 You can always [[Leave the room.->PlayerHHOffice]] ]
 
 {(if: $hasgun is false)[(link-rerun: "Try code?")[
-	(set: $safecode to (prompt: "Enter Code", ""))
-    	(if: $safecode is "2175")[
+	(set: _safecode to (prompt: "Enter Code", ""))
+    	(if: _safecode is "2175")[
         	(set: $hasgun to true) (set: $GunBullets's "Handgun Bullets" to it + $Pammoadd) (set: $Guns's "Handgun" to true)
             	(dialog: [In the safe was a .45 ACP hangun.], "Take the handgun.")[
                 	(dialog: [Next to the gun is a case of 45 ACP ammunition.], "Check the case")[
                     	(dialog: [In the case of bullets was $Pammoadd (if: $Pammoadd > 1 )[bullets.](else:)[bullet.] ], "Take the ammo.")[
-                        	(go-to: "PlayerOfficeKeypad")] ] ] ]
-        (else:)[(dialog: [Thats not the code], "Dismiss.")] ] ]}
+                        	(notify: '3s')[Handgun added to inventory (go-to: "PlayerOfficeKeypad")] ] ] ]
+        (else:)[(dialog: [Thats not the code], "Dismiss.")] ] ] ]}
 
 
 :: Playermotherbrokedoor {"position":"1300,600","size":"100,100"}
 (set: $loading to true)
+(set: $canusemenu to false)
 (go-to: "PMBD")
 
 
-:: Pre Game Vars {"position":"0,1200","size":"100,100"}
+:: Pre Game Vars {"position":"0,1400","size":"100,100"}
 (set: $audiochecker to false)
 (set:$loading to true)
 (set: $isinv to false)
@@ -423,26 +501,27 @@ You can always [[Leave the room.->PlayerHHOffice]] ]
 
 
 :: Pregame var setter and updater {"position":"500,300","size":"100,100"}
-{(set: $lastpassage to (history:)'s last)
+{
+(set: $lastpassage to (history:)'s last)
+(if: $selectedgun is "Handgun")[(set: $damage to $pistoldamage)]
 (if: $loading is true)[]
 (else-if: $loading is false)[(display: "HealthDisplay")]
 (set: $Pammoadd to (random: 1, 3))
 (if: $health > 100)[(set: $health to 100)]
-(if: $hasgun is true and $hasknife is true and $medkit is > 0)[(set: $mru to true)]}
+(if: $hasgun is true and $hasknife is true)[(set: $mru to true)]
+}
 
 
 
-:: Save and Load Menu {"position":"500,100","size":"100,100"}
-(float-box: "=X=", "=Y=")+(button:)[(link-rerun: "Save Game")[(save-game: "Save Game", "Save Game One")]
-(button:)[(link-rerun: "Save Game")[(save-game: "Save Game", "Save Game Two")]
-(button:)[(link-rerun: "Save Game")[(save-game: "Save Game", "Save Game Three")]]]
+:: Radio {"position":"0,700","size":"100,100"}
+(display: "Radio Input")
 
 
-
-(button:)[(link-rerun: "Load Save One")[(if: (saved-games:)contains "Save Game One")[(load-game: "Save Game One")] ] ]
-(button:)[(link-rerun: "Load Save Two")[(if: (saved-games:)contains "Save Game Two")[(load-game: "Save Game Two")] ] ]
-(button:)[(link-rerun: "Load Save Three")[(if: (saved-games:)contains "Save Game Three")[(load-game: "Saved Game Three")] ] ]
-]
+:: Radio Input {"position":"100,700","size":"100,100"}
+(link-rerun: "Speak on radio?")[(set: _radioprompts to (array: "hello?", "hello", "what is your name?", "whats your name?", "hi", "is anyone there?", "whats your name", "what is your name", "what's your name?", "what's your name") )
+	(set: $userinput to (prompt: "Talk on radio?", ""))
+    	(if: (lowercase: $userinput) is in _radioprompts)[(dialog: [hi], "hi")] 
+        (if: $userinput is not in _radioprompts)[(dialog: [The radio emits a faint static buzz.], "Dismiss.")] ]
 
 
 :: Sleep Ending One {"position":"1000,400","size":"100,100"}
@@ -452,11 +531,6 @@ You sleep and the cycle continues...
 	(dialog: [You can always try again.], "Try again.")[(go-to: "Var Preloader")] ]
 
 
-:: Start Game {"position":"200,300","size":"100,100"}
-(track: 'starttheme', 'play')(dialog: [This game contains topics that are not suitable for all audiences.
-By accepting you agree to your exposure of disturbing topics, creepy imagery, and dark themes. YOU HAVE BEEN WARNED!], "Accept and Play.")[(go-to: "Loading screen")]
-
-
 :: Start up [startup] {"position":"300,100","size":"100,100"}
 (track: 'starttheme', 'loop', true)
 
@@ -464,17 +538,26 @@ By accepting you agree to your exposure of disturbing topics, creepy imagery, an
 :: TSL {"position":"600,0","size":"100,100"}
 {
 <!--this is the trouble shooting list and is useful for all the reasons ur broswer may have an issue-->
-}(link-rerun: "Saving Trouble Shooting Tips : ")[Search up if your browser saves "local storage" if it doesnt than you should switch your browser, most compatable being chrome.]
+}(link-rerun: "Saving Trouble Shooting Tips : ")[Search up if your browser saves "local storage" if it doesnt than you should switch your browser, most compatable being chrome.
+{(link: "Save Game")[(save-game: "Test Save")[(if: (saved-games:)contains "Test Save")[You can save!]
+(else:)[Saving Doesn't work] ] ] }]
 (link-rerun: "Audio Trouble Shooting Tips : ")[To test if audio works on your browser (link-rerun: "click here!")[(track: 'audiocheck','play')] ]
+
+[[Return->How to Play]] 
 
 
 :: Var Preloader {"position":"900,400","size":"100,100"}
 (set: $loading to false)
 
+(display: "Player DMS Arrays")
 (display: "Player Vars")
 (display: "Player DMS")
 (display: "Player DM Vars")
 (display: "Player House Vars")
+(display: "Chapter Vars")
+(display: "Player House DMS")
+
+(track: 'starttheme', 'stop')
 
 (go-to: "Chapter One")
 <!--This runs before chapter one to reset all variables for a new game, unless you have saved you game in that case all variabes will be saved each preloader has it own unique variable for its chapter.-->
@@ -488,17 +571,32 @@ showControls: false
 :: hal.tracks [hal.tracks] {"position":"300,200","size":"100,100"}
 jumpscare: ./audio/Jumpscare.mp3
 loadingsound: ./audio/Loading.mp3
-starttheme: ./audio/Intro.mp3
-prestarttheme: ./audio/IntroNoLoop.mp3
+gamename: ./audio'/SLIPKNOT-RAPTURE.mp3
+starttheme: ./audio/Drone.mp3
 clock: ./audio/Alarmclock.mp3
 audiocheck: ./audio/SoundCheckJumpscare.mp3
 motherbossfight : ./audio/MotherBossFight.mp3
+collected: ./audio/ItemPickedUp.mp3
+showering: ./audio/ShowerLoop.mp3
+showerstart" ./audio/Shower.mp3
 
 
 :: take a shower {"position":"750,800","size":"100,100"}
-Enjoy the shower, the water cascades of you skin warm, the steam rising from the water.
+{
+(track: 'showerstart', 'loop', false)
+(track: 'showerstart', 'play')
+(set: _counter to 0)
+(live: 1s)[
+	(set: _counter to it +1)
+    (if: _counter is 79)[
+    	(track: 'showerstart', 'stop')
+        (track: 'showering', 'loop', true)
+        (track: 'showering', 'play') ] ]
+
+}Enjoy the shower, the water cascades of your skin warm, the steam levitating slowly up from the water.
 You miss when things where more relaxed, when you were a kid.
-That's long gone.
+Something tells you most of that is long gone.
+Long, long gone.
 
 Well... whenever you are ready you can [[step out.->PlayerHHBathroom]]
 (set: $takeshower to true)
@@ -508,14 +606,16 @@ Well... whenever you are ready you can [[step out.->PlayerHHBathroom]]
 {(set: _prescriptions to (a: "Risperidone 10 mg.", "Paliperidone 5 mg.", "Duloxetine 60 mg.", "Lamotrogine 200 mg.", "Propranolol 30 mg.", "Adderall-XR 30 mg.") )
 }You sit up and look around.
 
-It's... (text-style:"bold","smear","rumble")[dark], the dim lamp in the corner barely illuminates the room.
+It's... (text-style:"bold","smear","rumble")[dark]; the dim lamp in the corner barely illuminates the room.
 
 Your room consist of a few things, a desk with a desktop left open on
-(link-rerun: "godot")[(dialog:[The name of the project seems to be called Faithfully Faltured], "Dismiss.")], from last nights projects.
+{(link-rerun: "godot")[(dialog:[The name of the project seems to be called Faithfully Faltured], "Dismiss.")], from last nights projects.}
 
-{A couple of (link-rerun: "pill bottles")[(set: _changemed to _prescriptions's random)(dialog: [This bottle says _changemed], "Put down the bottle.")] are on the desk.}
+{(link-replace: "The desk has a Rocky Talkie Expedition Radio.")[You took the radio [(dialog: [The Radio slightly hums with static.], "Take the radio.")[(set: $radio to true)(notify: '3s')[Radio added to Inventory] ] ] ]}
+    
+A couple of {(link-rerun: "pill bottles")[(set: _changemed to _prescriptions's random)(dialog: [This bottle says _changemed], "Put down the bottle.")] are on the desk.}
 
-its probably best if you [[start your day->PlayerHouseHall]]
+It's probably best if you {(link-rerun: "start your day!")[(if: $radio is true)[(go-to: "PlayerHouseHall")](else:)[(dialog: [You should probably take the radio.], "Okay.")] ]}
 
 
 :: StoryScript [script]
@@ -536,8 +636,12 @@ Released under the Unlicense, and dedicated to the public domain.
 
 :: StoryStylesheet [stylesheet]
 :root {
-  font-size: 18px;
+  <twine-story> {
+    font-size: 18px;
+  }
 }
+
+
 
 /*this part is for controller tags, tags that change specific functions or interactiable via tags*/
 

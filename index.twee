@@ -257,8 +257,8 @@ Each Chapter has a different ending based on the players' choices. The player ca
 (display: "Player DMS")
 (display: "Player DM Vars")
 (display: "Player House Vars")
-(display: "Chapter Vars")}
-(display: "Player House DMS")
+(display: "Chapter Vars")
+(display: "Player House DMS")}
 
 
 :: Medkits {"position":"0,300","size":"100,100"}
@@ -270,7 +270,7 @@ Each Chapter has a different ending based on the players' choices. The player ca
 :: Mother Fight {"position":"1500,800","size":"100,100"}
 (float-box: "X", "=Y========")[(border: "solid")(meter: bind $bosshealth, 100, "X", "Boss Health", purple)]{
 
-(if: $bosshealth >= 0)[(go-to: "Ascending")]
+(if: $bosshealth is 0)[(go-to: "Ascending")]
 
 }(float-box: "=X=", "====Y")+(border: "solid")[Select an action!
 

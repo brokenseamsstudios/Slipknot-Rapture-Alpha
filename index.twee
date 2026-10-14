@@ -33,7 +33,7 @@ Slipknot Rapture
 :: Ascending {"position":"1200,300","size":"100,100"}
 Your body slumps to the ground... everything goes black...
 
-(link-replace: "This is how it was meant to be")[This place was no good for you, [[open your eyes.->Chapter Two Mother Ending]] ]
+(link-replace: "This is how it was meant to be")[This place was no good for you, [[open your eyes.->Chapter One Mother Ending]] ]
 
 
 :: Bullets {"position":"0,500","size":"100,100"}
@@ -43,7 +43,7 @@ Your body slumps to the ground... everything goes black...
 
 
 :: Chapter One {"position":"1000,500","size":"100,100"}
-(set: $canusemenu to true)bee-beep- BEEP! BEEP!
+(track: 'clock', 'play')(set: $canusemenu to true)bee-beep- BEEP! BEEP!
 
 The alarm clock snaps you out of the cozy dream disrupting your slumber.
 
@@ -60,12 +60,12 @@ You got the leave ending!
 [[Restart?->Var Preloader]]
 
 
-:: Chapter Two {"position":"1200,200","size":"100,100"}
-
-
-
-:: Chapter Two Mother Ending {"position":"1300,300","size":"100,100"}
+:: Chapter One Mother Ending {"position":"1425,300","size":"100,100"}
 You've reached the end of Chapter One!
+
+
+
+:: Chapter Two {"position":"1200,200","size":"100,100"}
 
 
 
@@ -151,8 +151,7 @@ Mixkit
 (set: _ishid to true)
 <!--this is the selection for the weapons and in here we are just going to type out the weapons!-->
 
-}|showselection)[{
-	(float-box: "=X=", "==Y")+(border: "Solid")[
+}|showselection)[(float-box: "=X=", "==Y")+(border: "Solid")[
 		(if: $Guns's Handgun is true)
 			[(button:)[(link-rerun: "Select Handgun")[
         		(set: $hasweaponequipped to true)
@@ -268,13 +267,12 @@ Each Chapter has a different ending based on the players' choices. The player ca
 
 
 :: Mother Fight {"position":"1500,800","size":"100,100"}
-(float-box: "X", "=Y========")[(border: "solid")(meter: bind $bosshealth, 100, "X", "Boss Health", purple)]{
+(float-box: "X", "=Y========")[(border: "solid")(meter: bind $bosshealth, 100, "X", "Boss Health", purple)]
 
-(if: $bosshealth is 0)[(go-to: "Ascending")]
-
-}(float-box: "=X=", "====Y")+(border: "solid")[Select an action!
+(float-box: "=X=", "====Y")+(border: "solid")[Select an action!
 
 {(button: "=X=")[(link-rerun: "Attack")[
+	(if: $bosshealth is 0)[(go-to: "Ascending")]
 	(if: $hasweaponequipped is true)[
 	(set: _attack to $CGD's random)(if: $selectedgun is "Handgun")[
     	(set: $bosshealth to it - _attack)]
@@ -400,10 +398,7 @@ Flies buzz around the (link-rerun: "rotten meat.")[(dialog: [The meat resemble m
 
 
 :: PlayerFrontDoor {"position":"1100,1150","size":"100,100"}
-{(if: $housekey is true)[(link-replace: "Unlock the door")[The door unlocks [[Step Out->Chapter One Front Door Ending]] ] ]
-(else-if: $housekey is false)[The door is locked.]}
-
-[[Walk Back->PlayerHHF1]]
+(if: $Housekeys's "Front Door Key" is true)[The morning star shines is early light through the windows; which is slight muffled by the partially see through curtains and the tinted glass. (link-rerun: "Try the front door?")[] ]
 
 
 :: PlayerHHBathroom {"position":"875,800","size":"100,100"}

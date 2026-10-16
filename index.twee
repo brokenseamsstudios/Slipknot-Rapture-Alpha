@@ -30,10 +30,20 @@ Slipknot Rapture
 
 
 
-:: Ascending {"position":"1200,300","size":"100,100"}
+:: Ascended {"position":"1200,475","size":"100,100"}
 Your body slumps to the ground... everything goes black...
 
 (link-replace: "This is how it was meant to be")[This place was no good for you, [[open your eyes.->Chapter One Mother Ending]] ]
+
+
+:: Ascending {"position":"1200,350","size":"100,100"}
+(set: _motherkilled to true)
+(set: _trackcounter to 0)
+(track: 'motherbossfight', 'stop')
+(track: 'ascension', 'play')
+(if: _motherkilled is true)[(enchant: ?page, (background: white))]
+(live: 1s)[(set: _trackcounter to it + 1)
+(if: _trackcounter is 6)[(go-to: "Ascended")] ]
 
 
 :: Bullets {"position":"0,500","size":"100,100"}
@@ -269,18 +279,18 @@ Each Chapter has a different ending based on the players' choices. The player ca
 :: Mother Fight {"position":"1500,800","size":"100,100"}
 (float-box: "X", "=Y========")[(border: "solid")(meter: bind $bosshealth, 100, "X", "Boss Health", purple)]
 
+
+
 (float-box: "=X=", "====Y")+(border: "solid")[Select an action!
 
 {(button: "=X=")[(link-rerun: "Attack")[
-	(if: $bosshealth is 0)[(go-to: "Ascending")]
 	(if: $hasweaponequipped is true)[
 	(set: _attack to $CGD's random)(if: $selectedgun is "Handgun")[
     	(set: $bosshealth to it - _attack)]
     		(dialog: [You attack with you weapons for _attack damage.], "Dismiss.")[
-            	(dialog: [The Monsters drill like fingers end in sharp points, They skin deep into your flesh as she attacks you. . . No humanity is left in her], "Push Her Away!")[(set: $health to it - (random: 5, 30))] ] ] ]
-
-	(else:)[(dialog: [You have no weapon selected.], "Dismiss")] ]}{
-}(button: "=X=")[(link-replace: "Use medkit")[chud] ] ]
+            	(dialog: [The Monsters drill like fingers end in sharp points, They skin deep into your flesh as she attacks you. . . No humanity is left in her], "Push Her Away!")[(set: $health to it - (random: 5, 30))(if: $bosshealth <= 0)[(go-to: "Ascending")] ] ] ] ] 
+                (else-if: $hasweaponequipped is false)[(dialog: [You have no weapon selected!!!], "DO SOMETHING!")[(go-to: "Inventory")] ] ]}
+(button: "=X=")[(link-replace: "Use medkit")[chud] ] ]
 
 
 :: MotherBossFight {"position":"1375,800","size":"100,100"}
@@ -391,7 +401,7 @@ You enter the (link-rerun: "dining room")[(dialog: [It reeks of decay, putrifact
 Flies buzz around the (link-rerun: "rotten meat.")[(dialog: [The meat resemble meat of what looks to be a human], "DON'T PUKE!")]
 
 (link-rerun: "Examine Table")[
-(if: $hasknife is false)[(link-replace: " Take knife?")[There is no knife on the table.(set: $hasknife to true)(dialog: [You have a knife.], "Nice.")] ]{
+(if: $hasknife is false)[(link-replace: " Take knife?")[There is no knife on the table.(set: $hasknife to true)(dialog: [You have a knife.], "Nice.")[(notify: '3s')[Knife was added to Inventory.] ]] ]{
 }(else-if: $hasknife is true)[There is no knife on the table.]]
 
 [[Exit the dining room->PlayerHHF1]]
@@ -451,10 +461,12 @@ All the way at the very end of the hall is {(if: $mru is false)[
 :: PlayerKitchen {"position":"900,1100","size":"100,100"}
 The kitchen is empty save for what you would usually find in a kitchen...
 (if: $HouseKeys's "Basement Key" is true)[There is nothing on the table.]{
-}(else-if: $HouseKeys's "Basement Key" is false)[Except for the (link-append: "keys")[(set: $HouseKeys's "Basement Key" to true)(dialog: [You grab the keys off the table], "Take the basement keys.")[(go-to: "PlayerKitchen")] ] that are on the table]
+}(else-if: $HouseKeys's "Basement Key" is false)[(set: _wasnotified to 0)Except for the (link-append: "keys")[(set: $HouseKeys's "Basement Key" to true)(dialog: [You grab the keys off the table], "Take the basement keys.")[(go-to: "PlayerKitchen")] ] that are on the table]
 
 [[go back->PlayerHHF1]]
 <!--Pbk is the player house basement key-->
+(if: $HouseKeys's "Basement Key" is true)[(set: _wasnotified to 1)]
+(if: _wasnotified > 0)[(notify: '3s')[Basement Key was added to Inventory.] ]
 
 
 :: PlayerOfficeKeypad {"position":"750,900","size":"100,100"}
@@ -573,7 +585,8 @@ audiocheck: ./audio/SoundCheckJumpscare.mp3
 motherbossfight : ./audio/MotherBossFight.mp3
 collected: ./audio/ItemPickedUp.mp3
 showering: ./audio/ShowerLoop.mp3
-showerstart" ./audio/Shower.mp3
+showerstart: ./audio/Shower.mp3
+ascension: ./audio/Ascension.mp3
 
 
 :: take a shower {"position":"750,800","size":"100,100"}

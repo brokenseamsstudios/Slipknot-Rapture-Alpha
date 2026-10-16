@@ -103,7 +103,8 @@ audiocheck: ./audio/SoundCheckJumpscare.mp3
 motherbossfight : ./audio/MotherBossFight.mp3
 collected: ./audio/ItemPickedUp.mp3
 showering: ./audio/ShowerLoop.mp3
-showerstart&quot; ./audio/Shower.mp3</tw-passagedata><tw-passagedata pid="3" name="Header" tags="header" position="300,300" size="100,100">(display: &quot;Pregame var setter and updater&quot;)
+showerstart: ./audio/Shower.mp3
+ascension: ./audio/Ascension.mp3</tw-passagedata><tw-passagedata pid="3" name="Header" tags="header" position="300,300" size="100,100">(display: &quot;Pregame var setter and updater&quot;)
 
 
 
@@ -273,17 +274,19 @@ Long, long gone.
 Well... whenever you are ready you can [[step out.-&gt;PlayerHHBathroom]]
 (set: $takeshower to true)</tw-passagedata><tw-passagedata pid="22" name="PlayerKitchen" tags="" position="900,1100" size="100,100">The kitchen is empty save for what you would usually find in a kitchen...
 (if: $HouseKeys&#39;s &quot;Basement Key&quot; is true)[There is nothing on the table.]{
-}(else-if: $HouseKeys&#39;s &quot;Basement Key&quot; is false)[Except for the (link-append: &quot;keys&quot;)[(set: $HouseKeys&#39;s &quot;Basement Key&quot; to true)(dialog: [You grab the keys off the table], &quot;Take the basement keys.&quot;)[(go-to: &quot;PlayerKitchen&quot;)] ] that are on the table]
+}(else-if: $HouseKeys&#39;s &quot;Basement Key&quot; is false)[(set: _wasnotified to 0)Except for the (link-append: &quot;keys&quot;)[(set: $HouseKeys&#39;s &quot;Basement Key&quot; to true)(dialog: [You grab the keys off the table], &quot;Take the basement keys.&quot;)[(go-to: &quot;PlayerKitchen&quot;)] ] that are on the table]
 
 [[go back-&gt;PlayerHHF1]]
-&lt;!--Pbk is the player house basement key--&gt;</tw-passagedata><tw-passagedata pid="23" name="PlayerBasement" tags="" position="1300,950" size="100,100">{(if: $HouseKeys&#39;s &quot;Basement Key&quot; is false)[(link-rerun: &quot;Try the basement door&quot;)[(dialog: [The door is locked you need the key], &quot;Walk back and keep searching.&quot;)] ]
+&lt;!--Pbk is the player house basement key--&gt;
+(if: $HouseKeys&#39;s &quot;Basement Key&quot; is true)[(set: _wasnotified to 1)]
+(if: _wasnotified &gt; 0)[(notify: &#39;3s&#39;)[Basement Key was added to Inventory.] ]</tw-passagedata><tw-passagedata pid="23" name="PlayerBasement" tags="" position="1300,950" size="100,100">{(if: $HouseKeys&#39;s &quot;Basement Key&quot; is false)[(link-rerun: &quot;Try the basement door&quot;)[(dialog: [The door is locked you need the key], &quot;Walk back and keep searching.&quot;)] ]
 }(else:)[(link-rerun:  &quot;Try the basement door&quot;)[(dialog: [You have unlocked the door [[Enter the basement.-&gt;PlayerBasementUnlocked]] ], &quot;Maybe later. . .&quot;)] ]
 
 [[PlayerHHF1&lt;-walk back.]]</tw-passagedata><tw-passagedata pid="24" name="PlayerDiningRoom" tags="" position="1300,1200" size="100,100">You enter the (link-rerun: &quot;dining room&quot;)[(dialog: [It reeks of decay, putrifaction, and rot.], &quot;Its disgusting&quot;)] it doesnt seem right.
 Flies buzz around the (link-rerun: &quot;rotten meat.&quot;)[(dialog: [The meat resemble meat of what looks to be a human], &quot;DON&#39;T PUKE!&quot;)]
 
 (link-rerun: &quot;Examine Table&quot;)[
-(if: $hasknife is false)[(link-replace: &quot; Take knife?&quot;)[There is no knife on the table.(set: $hasknife to true)(dialog: [You have a knife.], &quot;Nice.&quot;)] ]{
+(if: $hasknife is false)[(link-replace: &quot; Take knife?&quot;)[There is no knife on the table.(set: $hasknife to true)(dialog: [You have a knife.], &quot;Nice.&quot;)[(notify: &#39;3s&#39;)[Knife was added to Inventory.] ]] ]{
 }(else-if: $hasknife is true)[There is no knife on the table.]]
 
 [[Exit the dining room-&gt;PlayerHHF1]]</tw-passagedata><tw-passagedata pid="25" name="PlayerFrontDoor" tags="" position="1100,1150" size="100,100">(if: $Housekeys&#39;s &quot;Front Door Key&quot; is true)[The morning star shines is early light through the windows; which is slight muffled by the partially see through curtains and the tinted glass. (link-rerun: &quot;Try the front door?&quot;)[] ]</tw-passagedata><tw-passagedata pid="26" name="Start up" tags="startup" position="300,100" size="100,100">(track: &#39;starttheme&#39;, &#39;loop&#39;, true)</tw-passagedata><tw-passagedata pid="27" name="PlayerBasementUnlocked" tags="" position="1300,1050" size="100,100">{The first thing that catches your eyes in the basement is the (if: $medkit is 0)[(link-rerun: &quot;medical cabnit&quot;)[(dialog: [There is a medkit in the cabnit!], &quot;Take medkit&quot;)[(set: $medkti to it + 1)(notify: &#39;3s&#39;)[you got the medkit (go-to: &quot;PlayerBasementUnlocked&quot;)] ] ] ]
@@ -405,22 +408,28 @@ IT SHRIEKS IN PAIN WITH EACH MOVEMENT!!!
         (if: $userinput is not in _radioprompts)[(dialog: [The radio emits a faint static buzz.], &quot;Dismiss.&quot;)] ]</tw-passagedata><tw-passagedata pid="55" name="Radio" tags="" position="0,700" size="100,100">(display: &quot;Radio Input&quot;)</tw-passagedata><tw-passagedata pid="56" name="Chapter Vars" tags="" position="100,900" size="100,100">(set: $bosshealth to 100)
 (set: $isinbossfight to false)</tw-passagedata><tw-passagedata pid="57" name="Mother Fight" tags="" position="1500,800" size="100,100">(float-box: &quot;X&quot;, &quot;=Y========&quot;)[(border: &quot;solid&quot;)(meter: bind $bosshealth, 100, &quot;X&quot;, &quot;Boss Health&quot;, purple)]
 
+
+
 (float-box: &quot;=X=&quot;, &quot;====Y&quot;)+(border: &quot;solid&quot;)[Select an action!
 
 {(button: &quot;=X=&quot;)[(link-rerun: &quot;Attack&quot;)[
-	(if: $bosshealth is 0)[(go-to: &quot;Ascending&quot;)]
 	(if: $hasweaponequipped is true)[
 	(set: _attack to $CGD&#39;s random)(if: $selectedgun is &quot;Handgun&quot;)[
     	(set: $bosshealth to it - _attack)]
     		(dialog: [You attack with you weapons for _attack damage.], &quot;Dismiss.&quot;)[
-            	(dialog: [The Monsters drill like fingers end in sharp points, They skin deep into your flesh as she attacks you. . . No humanity is left in her], &quot;Push Her Away!&quot;)[(set: $health to it - (random: 5, 30))] ] ] ]
+            	(dialog: [The Monsters drill like fingers end in sharp points, They skin deep into your flesh as she attacks you. . . No humanity is left in her], &quot;Push Her Away!&quot;)[(set: $health to it - (random: 5, 30))(if: $bosshealth &lt;= 0)[(go-to: &quot;Ascending&quot;)] ] ] ] ] 
+                (else-if: $hasweaponequipped is false)[(dialog: [You have no weapon selected!!!], &quot;DO SOMETHING!&quot;)[(go-to: &quot;Inventory&quot;)] ] ]}
+(button: &quot;=X=&quot;)[(link-replace: &quot;Use medkit&quot;)[chud] ] ]</tw-passagedata><tw-passagedata pid="58" name="Player DMS Arrays" tags="" position="0,1500" size="100,100">&lt;!--This sets the damage amount depending on what weapon you have equiped--&gt;
+(set: $pistoldamage to (array: 15, 25, 30) )</tw-passagedata><tw-passagedata pid="59" name="Ascending" tags="" position="1200,350" size="100,100">(set: _motherkilled to true)
+(set: _trackcounter to 0)
+(track: &#39;motherbossfight&#39;, &#39;stop&#39;)
+(track: &#39;ascension&#39;, &#39;play&#39;)
+(if: _motherkilled is true)[(enchant: ?page, (background: white))]
+(live: 1s)[(set: _trackcounter to it + 1)
+(if: _trackcounter is 6)[(go-to: &quot;Ascended&quot;)] ]</tw-passagedata><tw-passagedata pid="60" name="Chapter One Mother Ending" tags="" position="1425,300" size="100,100">You&#39;ve reached the end of Chapter One!
+</tw-passagedata><tw-passagedata pid="61" name="Ascended" tags="" position="1200,475" size="100,100">Your body slumps to the ground... everything goes black...
 
-	(else:)[(dialog: [You have no weapon selected.], &quot;Dismiss&quot;)] ]}{
-}(button: &quot;=X=&quot;)[(link-replace: &quot;Use medkit&quot;)[chud] ] ]</tw-passagedata><tw-passagedata pid="58" name="Player DMS Arrays" tags="" position="0,1500" size="100,100">&lt;!--This sets the damage amount depending on what weapon you have equiped--&gt;
-(set: $pistoldamage to (array: 15, 25, 30) )</tw-passagedata><tw-passagedata pid="59" name="Ascending" tags="" position="1200,300" size="100,100">Your body slumps to the ground... everything goes black...
-
-(link-replace: &quot;This is how it was meant to be&quot;)[This place was no good for you, [[open your eyes.-&gt;Chapter One Mother Ending]] ]</tw-passagedata><tw-passagedata pid="60" name="Chapter One Mother Ending" tags="" position="1425,300" size="100,100">You&#39;ve reached the end of Chapter One!
-</tw-passagedata></tw-storydata>
+(link-replace: &quot;This is how it was meant to be&quot;)[This place was no good for you, [[open your eyes.-&gt;Chapter One Mother Ending]] ]</tw-passagedata></tw-storydata>
 <script title="Twine engine code" data-main="harlowe">(function(){"use strict";
 var require,define;!function(){var e={},r={};require=function(i){var n=e[i];return n&&(r[i]=n[1].apply(void 0,n[0].map(require)),e[i]=void 0),r[i]},(define=function(r,i,n){if("function"==typeof r)return r();e[r]=[i,n]}).amd=!0}();/*!
  * https://github.com/paulmillr/es6-shim

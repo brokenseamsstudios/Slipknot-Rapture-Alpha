@@ -9,7 +9,7 @@
 </head>
 <body>
 <tw-story><noscript><tw-noscript>JavaScript needs to be enabled to play Slipknot Rapture.</tw-noscript></noscript></tw-story>
-<tw-storydata name="Slipknot Rapture" startnode="13" creator="Twine" creator-version="2.12.0" format="Harlowe" format-version="3.3.9" ifid="cf166349-da95-4984-8b7b-f7dce74ac0c6" options="" tags="" zoom="1" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">:root {
+<tw-storydata name="Slipknot Rapture" startnode="13" creator="Twine" creator-version="2.12.1" format="Harlowe" format-version="3.3.9" ifid="cf166349-da95-4984-8b7b-f7dce74ac0c6" options="" tags="" zoom="1" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">:root {
   <twine-story> {
     font-size: 18px;
   }
@@ -96,7 +96,7 @@ Released under the Unlicense, and dedicated to the public domain.
 (display: &quot;Chapter Vars&quot;)
 (display: &quot;Player House DMS&quot;)}</tw-passagedata><tw-passagedata pid="2" name="hal.tracks" tags="hal.tracks" position="300,200" size="100,100">jumpscare: ./audio/Jumpscare.mp3
 loadingsound: ./audio/Loading.mp3
-gamename: ./audio&#39;/SLIPKNOT-RAPTURE.mp3
+gamename: ./audio/SLIPKNOTRAPTURE.mp3
 starttheme: ./audio/Drone.mp3
 clock: ./audio/Alarmclock.mp3
 audiocheck: ./audio/SoundCheckJumpscare.mp3
@@ -295,19 +295,17 @@ Flies buzz around the (link-rerun: &quot;rotten meat.&quot;)[(dialog: [The meat 
 {(if: $HouseKeys&#39;s &quot;Front Door Key&quot; is false)[(link-replace: &quot;Something on the floor catches your eye.&quot;)[(link-replace: &quot;Theres a key on the ground.&quot;)[(link-replace: &quot;Take the key.&quot;)[There is nothing on the ground anymore.(set: $housekey to true)] ] ] ]
 (else:)[There is nothing on the ground anymore.]}
 
-[[Head back.-&gt;PlayerHHF1]]</tw-passagedata><tw-passagedata pid="28" name="FakeStartScreen" tags="" position="200,300" size="100,100">{(track: &#39;gamename&#39;, &#39;loop&#39;, false)
-(set: $canshowmenu to true)
-(set: _audiochecker to false)
-}(button:)[(link-rerun: &quot;Start Game&quot;)[(if: _audiochecker is false)[(track: &#39;gamename&#39;, &#39;play&#39;)(set: _audiochecker to true)(go-to: &quot;Var Preloader&quot;)] ] ] 
-
-(button: &quot;=X=&quot;)[(link-rerun: &quot;Clear Data&quot;)[(dialog: [This does nothing right now.], &quot;Dismiss&quot;)] ] 
-
-(display: &quot;Credits and Links&quot;)
-(display: &quot;Difficulty Picker&quot;)
-&lt;!--The fake start screen forces the player to click and therefore allows a bug to be fixed which allows audio to be played--&gt;
+[[Head back.-&gt;PlayerHHF1]]</tw-passagedata><tw-passagedata pid="28" name="FakeStartScreen" tags="" position="200,300" size="100,100">{
 (track: &#39;starttheme&#39;, &#39;loop&#39;, true)
 (track: &#39;starttheme&#39;, &#39;play&#39;)
-(if: _audiochecker is true and (track: &#39;gamename&#39;, &#39;isplaying&#39;) )[wuh]</tw-passagedata><tw-passagedata pid="29" name="Chapter One Front Door Ending" tags="" position="1100,1300" size="100,100">You got the leave ending!
+(track: &#39;gamename&#39;, &#39;loop&#39;, false)
+(set: $canshowmenu to true)
+(set: _audiocounter to 0)
+}(button:)[(link-replace: &quot;Start Game&quot;)[Good luck and have fun!(track: &#39;starttheme&#39;, &#39;stop&#39;)(track: &#39;gamename&#39;, &#39;play&#39;)
+	(live: 1s)[(set: _audiocounter to it + 1)(if: _audiocounter &gt;= 6)[(go-to: &quot;Var Preloader&quot;)] ] ] ]
+(display: &quot;Credits and Links&quot;)
+(display: &quot;Difficulty Picker&quot;)
+&lt;!--The fake start screen forces the player to click and therefore allows a bug to be fixed which allows audio to be played--&gt;</tw-passagedata><tw-passagedata pid="29" name="Chapter One Front Door Ending" tags="" position="1100,1300" size="100,100">You got the leave ending!
 
 [[Restart?-&gt;Var Preloader]]</tw-passagedata><tw-passagedata pid="30" name="Pregame var setter and updater" tags="" position="500,300" size="100,100">{
 (set: $lastpassage to (history:)&#39;s last)

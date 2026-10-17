@@ -113,19 +113,17 @@ Mixkit
 
 
 :: FakeStartScreen {"position":"200,300","size":"100,100"}
-{(track: 'gamename', 'loop', false)
+{
+(track: 'starttheme', 'loop', true)
+(track: 'starttheme', 'play')
+(track: 'gamename', 'loop', false)
 (set: $canshowmenu to true)
-(set: _audiochecker to false)
-}(button:)[(link-rerun: "Start Game")[(if: _audiochecker is false)[(track: 'gamename', 'play')(set: _audiochecker to true)(go-to: "Var Preloader")] ] ] 
-
-(button: "=X=")[(link-rerun: "Clear Data")[(dialog: [This does nothing right now.], "Dismiss")] ] 
-
+(set: _audiocounter to 0)
+}(button:)[(link-replace: "Start Game")[Good luck and have fun!(track: 'starttheme', 'stop')(track: 'gamename', 'play')
+	(live: 1s)[(set: _audiocounter to it + 1)(if: _audiocounter >= 6)[(go-to: "Var Preloader")] ] ] ]
 (display: "Credits and Links")
 (display: "Difficulty Picker")
 <!--The fake start screen forces the player to click and therefore allows a bug to be fixed which allows audio to be played-->
-(track: 'starttheme', 'loop', true)
-(track: 'starttheme', 'play')
-(if: _audiochecker is true and (track: 'gamename', 'isplaying') )[wuh]
 
 
 :: Footer [footer] {"position":"400,300","size":"100,100"}
@@ -578,7 +576,7 @@ showControls: false
 :: hal.tracks [hal.tracks] {"position":"300,200","size":"100,100"}
 jumpscare: ./audio/Jumpscare.mp3
 loadingsound: ./audio/Loading.mp3
-gamename: ./audio'/SLIPKNOT-RAPTURE.mp3
+gamename: ./audio/SLIPKNOTRAPTURE.mp3
 starttheme: ./audio/Drone.mp3
 clock: ./audio/Alarmclock.mp3
 audiocheck: ./audio/SoundCheckJumpscare.mp3
